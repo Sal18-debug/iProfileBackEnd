@@ -14,6 +14,7 @@ app.use(bodyParser.urlencoded({
 
 //routes
 const user = require('./routes/user')
+const project = require('./routes/project')
 
 //connect to mongoose
 const mongoose = require('mongoose')
@@ -33,5 +34,6 @@ app.get('/', (req, res) => {
 })
 
 app.use('/user', user)
+app.use('/project', project)
 
 app.listen(port, () => console.log("listening at port", port))

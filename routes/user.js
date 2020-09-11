@@ -22,6 +22,7 @@ router.get('/email', (req, res) => {
 // register a user
 // http://localhost:5000/user/register
 router.post("/register", (req, res) => {
+
   const { email, firstName, lastName, password, student } = req.body
   //hash password
   bcrypt.hash(password, saltRounds, function (err, hash) {
@@ -38,8 +39,8 @@ router.post("/register", (req, res) => {
 
     User.find({ email: user.email }, (err, users) => {
       //if user already exists in database
-      if (users.length) {
-        res.send("Email already exists")
+      if (users.length > 0) {
+        res.send("Email already exists", users)
       } else {
         //add the user to the db
         user.save((err) => {
@@ -168,4 +169,7 @@ router.get('/email/:email/projects', (req, res) => {
     }
   })
 })
+
+
+
 module.exports = router;
