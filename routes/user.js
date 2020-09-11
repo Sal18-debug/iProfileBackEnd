@@ -5,6 +5,7 @@ const User = require("../models/User")
 //for hashing passwords
 const bcrypt = require("bcrypt")
 const Profile = require("../models/Profile")
+const Project = require("../models/Project")
 const saltRounds = 10
 
 async function passMatch(user, password) {
@@ -87,7 +88,7 @@ router.post('/loginId/:loginId/profile', (req, res) => {
     graduationDate, imageUrl, major, profileAvaliableToRecruiter,
     recieveMessageFromRecruiters } = req.body
 
-  const {loginId} = req.params.loginId
+  const { loginId } = req.params.loginId
   //create new profile
   const userProfile = new Profile({
     loginId, lastName, firstName, dateOfBirth, university,
@@ -114,15 +115,44 @@ router.post('/loginId/:loginId/profile', (req, res) => {
 // get user profile
 // http://localhost:5000/user/loginId/a/profile
 router.get('/loginId/:loginId/profile', async (req, res) => {
-  var {loginId} = req.params
+  var { loginId } = req.params
   //find profile with given loginId
-  Profile.findOne({ loginId: req.params.loginId}, async (err, profile) => {
-    if (profile){
+  Profile.findOne({ loginId: req.params.loginId }, async (err, profile) => {
+    if (profile) {
       res.send(profile)
-    }else{
-      res.send({error: `Profile does not exist for ${loginId}`})
+    } else {
+      res.send({ error: `Profile does not exist for ${loginId}` })
     }
   })
 })
 
+// create user project
+
+// router.post('/loginId/:loginId/project', async (req, res) => {
+//   let { loginId } = req.params
+//   let { title, category, projectUrl, startDate, endDate, description,
+//     contributors } = req.body
+
+//   let project = new Project({
+//     loginId,
+//     title,
+//     category,
+//     projectUrl,
+//     startDate,
+//     endDate,
+//     description,
+//     contributors
+//   }) = req.body
+
+//   project.save(err => {
+//     if (err) {
+//       res.send({
+//         success: false,
+//         error: err
+//       })
+//     } else {
+//       res.send({ success: true, msg: "User project successfully added" })
+//     }
+//   })
+// })
 module.exports = router;
