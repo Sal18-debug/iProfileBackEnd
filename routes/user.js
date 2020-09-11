@@ -111,5 +111,18 @@ router.post('/loginId/:loginId/profile', (req, res) => {
   })
 })
 
+// get user profile
+// http://localhost:5000/user/loginId/a/profile
+router.get('/loginId/:loginId/profile', async (req, res) => {
+  var {loginId} = req.params
+  //find profile with given loginId
+  Profile.findOne({ loginId: req.params.loginId}, async (err, profile) => {
+    if (profile){
+      res.send(profile)
+    }else{
+      res.send({error: `Profile does not exist for ${loginId}`})
+    }
+  })
+})
 
 module.exports = router;
