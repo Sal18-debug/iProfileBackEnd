@@ -157,8 +157,8 @@ router.post('/email/:email/project', async (req, res) => {
 })
 
 // get all projects created by user
-
-router.get('user/email/:email/projects', (req, res) => {
+// http://localhost:5000/user/email/:email/projects
+router.get('/email/:email/projects', (req, res) => {
   let { email } = req.params
   Project.find({ email: email }, (err, projects) => {
     if (err) {
