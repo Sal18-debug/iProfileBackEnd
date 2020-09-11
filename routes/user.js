@@ -14,7 +14,7 @@ async function passMatch(user, password) {
   return match
 }
 
-router.get('/loginId', (req, res) => {
+router.get('/email', (req, res) => {
   console.log('hit')
   res.send("hi")
 })
@@ -22,21 +22,21 @@ router.get('/loginId', (req, res) => {
 // register a user
 // http://localhost:5000/user/register
 router.post("/register", (req, res) => {
-  const { loginId, firstName, lastName, password, student } = req.body
+  const { email, firstName, lastName, password, student } = req.body
   //hash password
   bcrypt.hash(password, saltRounds, function (err, hash) {
     let hashedPassword = hash
 
     //create a user using the payload and hashed password
     const user = new User({
-      loginId: loginId,
+      email: email,
       firstName: firstName,
       lastName: lastName,
       password: hashedPassword,
       student: student
     })
 
-    User.find({ loginId: user.loginId }, (err, users) => {
+    User.find({ email: user.email }, (err, users) => {
       //if user already exists in database
       if (users.length) {
         res.send("Email already exists")
@@ -58,12 +58,12 @@ router.post("/register", (req, res) => {
 
 // user login
 // http://localhost:5000/user/login
-// body: {loginId, password}
+// body: {email, password}
 router.get("/login", (req, res) => {
-  const { loginId, password } = req.body
+  const { email, password } = req.body
 
   //find user with given email in the database
-  User.findOne({ loginId: loginId }, async (err, user) => {
+  User.findOne({ email: email }, async (err, user) => {
     //no user in database has specified email
     if (!user) {
       res.send("User does not exist")
@@ -83,20 +83,20 @@ router.get("/login", (req, res) => {
 })
 
 // create user profile
-router.post('/loginId/:loginId/profile', (req, res) => {
+router.post('/email/:email/profile', (req, res) => {
   const { lastName, firstName, dateOfBirth, university,
     graduationDate, imageUrl, major, profileAvaliableToRecruiter,
     recieveMessageFromRecruiters } = req.body
 
-  const { loginId } = req.params.loginId
+  const { email } = req.params.email
   //create new profile
   const userProfile = new Profile({
-    loginId, lastName, firstName, dateOfBirth, university,
+    email, lastName, firstName, dateOfBirth, university,
     graduationDate, imageUrl, major, profileAvaliableToRecruiter,
     recieveMessageFromRecruiters
   })
 
-  Profile.findOne({ loginId: loginId }, async (err, profile) => {
+  Profile.findOne({ email: email }, async (err, profile) => {
     if (profile) {
       res.send("Profile already exists")
     } else {
@@ -113,46 +113,59 @@ router.post('/loginId/:loginId/profile', (req, res) => {
 })
 
 // get user profile
-// http://localhost:5000/user/loginId/a/profile
-router.get('/loginId/:loginId/profile', async (req, res) => {
-  var { loginId } = req.params
-  //find profile with given loginId
-  Profile.findOne({ loginId: req.params.loginId }, async (err, profile) => {
+// http://localhost:5000/user/email/:email/profile
+router.get('/email/:email/profile', async (req, res) => {
+  var { email } = req.params
+  //find profile with given email
+  Profile.findOne({ email: req.params.email }, async (err, profile) => {
     if (profile) {
       res.send(profile)
     } else {
-      res.send({ error: `Profile does not exist for ${loginId}` })
+      res.send({ error: `Profile does not exist for ${email}` })
     }
   })
 })
 
 // create user project
+// http://localhost:5000/user/email/:email/project
+router.post('/email/:email/project', async (req, res) => {
+  let { email } = req.params
+  let { title, category, projectUrl, startDate, endDate, description,
+    contributors } = req.body
 
-// router.post('/loginId/:loginId/project', async (req, res) => {
-//   let { loginId } = req.params
-//   let { title, category, projectUrl, startDate, endDate, description,
-//     contributors } = req.body
+  let project = new Project({
+    email,
+    title,
+    category,
+    projectUrl,
+    startDate,
+    endDate,
+    description,
+    contributors
+  })
 
-//   let project = new Project({
-//     loginId,
-//     title,
-//     category,
-//     projectUrl,
-//     startDate,
-//     endDate,
-//     description,
-//     contributors
-//   }) = req.body
+  project.save(err => {
+    if (err) {
+      res.send({
+        success: false,
+        error: err
+      })
+    } else {
+      res.send({ success: true, msg: "User project successfully added" })
+    }
+  })
+})
 
-//   project.save(err => {
-//     if (err) {
-//       res.send({
-//         success: false,
-//         error: err
-//       })
-//     } else {
-//       res.send({ success: true, msg: "User project successfully added" })
-//     }
-//   })
-// })
+// get all projects created by user
+
+router.get('user/email/:email/projects', (req, res) => {
+  let { email } = req.params
+  Project.find({ email: email }, (err, projects) => {
+    if (err) {
+      res.send({ success: false, error: err })
+    } else {
+      res.send({ success: true, projects: projects })
+    }
+  })
+})
 module.exports = router;

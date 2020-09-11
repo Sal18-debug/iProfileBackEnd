@@ -1,7 +1,7 @@
 var mongoose = require("mongoose")
 
 const projectSchema = new mongoose.Schema({
-    loginId: String,
+    email: String,
     title: String,
     category: String,
     projectUrl: String,
