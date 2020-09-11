@@ -4,6 +4,7 @@ const User = require("../models/User")
 
 //for hashing passwords
 const bcrypt = require("bcrypt")
+const Profile = require("../models/Profile")
 const saltRounds = 10
 
 async function passMatch(user, password) {
@@ -76,6 +77,36 @@ router.get("/login", (req, res) => {
         console.log("Success: email and password match")
         res.send("Success: email and password match")
       }
+    }
+  })
+})
+
+// create user profile
+router.post('/loginId/:loginId/profile', (req, res) => {
+  const { lastName, firstName, dateOfBirth, university,
+    graduationDate, imageUrl, major, profileAvaliableToRecruiter,
+    recieveMessageFromRecruiters } = req.body
+
+  const {loginId} = req.params.loginId
+  //create new profile
+  const userProfile = new Profile({
+    loginId, lastName, firstName, dateOfBirth, university,
+    graduationDate, imageUrl, major, profileAvaliableToRecruiter,
+    recieveMessageFromRecruiters
+  })
+
+  Profile.findOne({ loginId: loginId }, async (err, profile) => {
+    if (profile) {
+      res.send("Profile already exists")
+    } else {
+      userProfile.save(err => {
+        if (err) {
+          console.log(err)
+        } else {
+          console.log("user profile successfully added")
+          res.send("User profile successfully added")
+        }
+      })
     }
   })
 })
