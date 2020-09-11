@@ -1,30 +1,41 @@
 const express = require("express")
 const router = express.Router()
+const User = require("../models/User")
 
+//for hashing passwords
+const bcrypt = require("bcrypt")
+const saltRounds = 10
 
+async function passMatch(user, password) {
+    //compares inputted password with hashed password in db
+    const match = await bcrypt.compare(password, user.password)
+    return match
+  }
+  
 router.get('/loginId', (req, res) => {
     console.log('hit')
     res.send("hi")
 })
 
 router.post("/register", (req, res) => {
-    var { name, email, password, balance } = req.body.user
-  
+    console.log(req.body)
+    var { loginId, firstName, lastName, password, student} = req.body
     //hash password
     bcrypt.hash(password, saltRounds, function (err, hash) {
       let hashedPassword = hash
   
       //create a user using the payload and hashed password
       const user = new User({
-        name: name,
-        email: email,
+        loginId: loginId,
+        firstName: firstName,
+        lastName: lastName,
         password: hashedPassword,
-        balance: balance,
-      })
+        student: student
+    })
   
-      User.find({ email: user.email }, (err, emails) => {
+      User.find({ loginId: user.loginId }, (err, users) => {
         //if user already exists in database
-        if (emails.length) {
+        if (users.length) {
           res.send("Email already exists")
         } else {
           //add the user to the db
