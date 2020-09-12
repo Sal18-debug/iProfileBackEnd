@@ -137,8 +137,11 @@ router.post('/email/:email/profile', (req, res) => {
 // http://localhost:5000/user/email/:email/profile
 router.get('/email/:email/profile', async (req, res) => {
   var { email } = req.params
+  console.log('inside get user profile')
   //find profile with given email
   Profile.findOne({ email: req.params.email }, async (err, profile) => {
+    console.log('profile', profile)
+
     if (profile) {
       res.send({success: true, message: "Success!", profile: profile})
     } else {

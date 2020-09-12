@@ -1,6 +1,24 @@
 const express = require("express")
 const router = express.Router()
 const Comment = require("../models/Comment")
+const Project = require("../models/Project")
+
+
+// get specific project
+router.get("/projectId/:projectId", (req, res) => {
+    console.log('aerpak')
+    const { projectId } = req.params
+    Project.findOne({ _id: projectId}, async (err, project) => {
+        if (project) {
+            res.send({success: true, message: "Success!", project: project})
+          } else {
+            res.send({success: false, message: `Project with this ID does not exist`})
+          }
+    })
+})
+
+
+
 
 // add comments to a project
 // 
@@ -26,5 +44,6 @@ router.post("/:projectId/comment", (req, res) => {
         }
     })
 })
+
 
 module.exports = router;
