@@ -10,7 +10,7 @@ const projectSchema = new mongoose.Schema({
     description: String,
     major: String,
     category: String,
-    contributors: [String]
+    contributors: String
 })
 
 module.exports = mongoose.model("Project", projectSchema)

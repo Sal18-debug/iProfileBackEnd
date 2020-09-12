@@ -165,6 +165,8 @@ router.post('/email/:email/project', async (req, res) => {
     contributors
   })
 
+  console.log('creating project with', project)
+
   project.save(err => {
     if (err) {
       res.send({
