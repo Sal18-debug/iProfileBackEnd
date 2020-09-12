@@ -42,15 +42,22 @@ router.post("/register", (req, res) => {
       //if user already exists in database
       if (users.length > 0) {
         console.log('users :', user.email, users)
-        res.send("Email already exists", users)
+        res.send({success: false, message: "Email already exists"})
       } else {
         //add the user to the db
         user.save((err) => {
           if (err) {
             console.log(err)
+            res.send({
+              success: false,
+              error: err
+            })
           } else {
             console.log("user successfully added: ", user)
-            res.send("User successfully added")
+            res.send({
+              success: true,
+              message: "user successfully added"
+            })
           }
         })
       }
@@ -75,17 +82,17 @@ router.get("/login", (req, res) => {
   User.findOne({ email: email }, async (err, user) => {
     //no user in database has specified email
     if (!user) {
-      res.send("User does not exist")
+      res.send({success: false, message: "User does not exist"})
     } else {
       //email exists but incorrect password
       let match = await passMatch(user, password)
       if (!match) {
         console.log("email exists but incorrect password")
-        res.send("email exists but incorrect password")
+        res.send({success: false, message: "Email exists but incorrect password"})
       } else {
         //email and passwords match
         console.log("Success: email and password match")
-        res.send("Success: email and password match")
+        res.send({success: true, message: "Successful login"})
       }
     }
   })

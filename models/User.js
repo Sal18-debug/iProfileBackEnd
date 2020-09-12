@@ -5,6 +5,7 @@ const userSchema = new mongoose.Schema({
     firstName: String,
     lastName: String,
     password: String,
+    company: String,
     student: Boolean // student or recruiter
 })
 
