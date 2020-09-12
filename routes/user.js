@@ -24,6 +24,7 @@ router.get('/email', (req, res) => {
 router.post("/register", (req, res) => {
 
   const { email, firstName, lastName, password, student } = req.body
+  console.log('body', req.body)
   //hash password
   bcrypt.hash(password, saltRounds, function (err, hash) {
     let hashedPassword = hash
@@ -40,6 +41,7 @@ router.post("/register", (req, res) => {
     User.find({ email: user.email }, (err, users) => {
       //if user already exists in database
       if (users.length > 0) {
+        console.log('users :', user.email, users)
         res.send("Email already exists", users)
       } else {
         //add the user to the db
@@ -57,12 +59,18 @@ router.post("/register", (req, res) => {
 })
 
 
+async function passMatch(user, password) {
+  //compares inputted password with hashed password in db
+  const match = await bcrypt.compare(password, user.password)
+  return match
+}
+
 // user login
 // http://localhost:5000/user/login
 // body: {email, password}
 router.get("/login", (req, res) => {
-  const { email, password } = req.body
-
+  const { email, password } = req.query
+  console.log('body', email, password)
   //find user with given email in the database
   User.findOne({ email: email }, async (err, user) => {
     //no user in database has specified email
