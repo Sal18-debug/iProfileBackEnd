@@ -4,7 +4,7 @@ const Comment = require("../models/Comment")
 const Project = require("../models/Project")
 
 
-// get specific project
+// get specific project by _id
 router.get("/projectId/:projectId", (req, res) => {
     console.log('aerpak')
     const { projectId } = req.params
