@@ -114,14 +114,14 @@ router.post('/email/:email/profile', (req, res) => {
 
   Profile.findOne({ email: email }, async (err, profile) => {
     if (profile) {
-      res.send("Profile already exists")
+      res.send({success: true, message: "Profile already exists"})
     } else {
       userProfile.save(err => {
         if (err) {
-          console.log(err)
+          res.send({success: false, message: err})
         } else {
           console.log("user profile successfully added")
-          res.send("User profile successfully added")
+          res.send({success: true, message: "User profile successfully added"})
         }
       })
     }
@@ -135,9 +135,9 @@ router.get('/email/:email/profile', async (req, res) => {
   //find profile with given email
   Profile.findOne({ email: req.params.email }, async (err, profile) => {
     if (profile) {
-      res.send(profile)
+      res.send({success: true, message: "Success!", profile: profile})
     } else {
-      res.send({ error: `Profile does not exist for ${email}` })
+      res.send({success: false, message: `Profile does not exist for ${email}`})
     }
   })
 })
