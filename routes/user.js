@@ -99,25 +99,30 @@ router.get("/login", (req, res) => {
 })
 
 // create user profile
+// http://localhost:5000/user/email/:email/profile
 router.post('/email/:email/profile', (req, res) => {
   const { lastName, firstName, dateOfBirth, university,
-    graduationDate, imageUrl, major, profileAvaliableToRecruiter,
+    graduation, imageUrl, degree, major, profileAvaliableToRecruiter,
     recieveMessageFromRecruiters } = req.body
 
-  const { email } = req.params.email
+  const { email } = req.params
+  console.log('user prof email', req.params, email)
   //create new profile
   const userProfile = new Profile({
     email, lastName, firstName, dateOfBirth, university,
-    graduationDate, imageUrl, major, profileAvaliableToRecruiter,
+    graduation, imageUrl, degree, major, profileAvaliableToRecruiter,
     recieveMessageFromRecruiters
   })
+  console.log('new prof', userProfile)
 
   Profile.findOne({ email: email }, async (err, profile) => {
-    if (profile) {
+    if (profile && profile.length > 0) {
+      console.log('prof', profile)
       res.send({success: true, message: "Profile already exists"})
     } else {
       userProfile.save(err => {
         if (err) {
+          console.log(err)
           res.send({success: false, message: err})
         } else {
           console.log("user profile successfully added")

@@ -8,6 +8,7 @@ const profileSchema = new mongoose.Schema({
   university: String,
   graduation: Date,
   imageUrl: String,
+  degree: String,
   major: String,
   profileAvaliableToRecruiter: {
       type: Boolean,
